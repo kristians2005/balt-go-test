@@ -35,7 +35,7 @@ export default function AllPosts() {
 
   useEffect(() => {
     setLoading(true)
-    getData(mode as 'local' | 'api').then((result) => {
+    getData(mode as 'local' | 'api').then((result: Post[]) => {
       setData(result)
       setLoading(false)
     })

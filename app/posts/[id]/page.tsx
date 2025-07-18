@@ -37,8 +37,8 @@ export default function PostPage({ params }: { params: Promise<{ id: string }> }
 
   useEffect(() => {
     setLoading(true)
-    getPost(mode as 'local' | 'api', id).then((data) => {
-      setPost(data)
+    getPost(mode as 'local' | 'api', id).then((data: Post | undefined) => {
+      setPost(data ?? null)
       setLoading(false)
     })
   }, [mode, id])
