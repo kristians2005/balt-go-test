@@ -14,14 +14,23 @@ const getMode = () => {
   return "local"
 }
 
+type Post = {
+  id: number;
+  title: string;
+  body?: string;
+  [key: string]: any;
+}
+
 export default function PostPage({ params }: { params: Promise<{ id: string }> }) {
   const [mode, setMode] = useState(getMode())
-  const [post, setPost] = useState<any>(null)
+  const [post, setPost] = useState<Post | null>(null)
   const [loading, setLoading] = useState(true)
+  const [hasMounted, setHasMounted] = useState(false)
   const { id } = use(params)
   const router = useRouter()
 
   useEffect(() => {
+    setHasMounted(true)
     const onModeChange = () => setMode(getMode())
     window.addEventListener("modechange", onModeChange)
     return () => window.removeEventListener("modechange", onModeChange)
@@ -34,6 +43,8 @@ export default function PostPage({ params }: { params: Promise<{ id: string }> }
       setLoading(false)
     })
   }, [mode, id])
+
+  if (!hasMounted) return null
 
   if (loading) {
     return <div className="text-center py-12 text-lg text-gray-500 dark:text-gray-400">Ielādē ierakstu...</div>

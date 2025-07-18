@@ -14,9 +14,11 @@ const getInitialMode = () => {
 
 const ModeToggle: React.FC = () => {
   const [mode, setMode] = useState(getInitialMode())
+  const [hasMounted, setHasMounted] = useState(false)
   const isApi = mode === "api"
 
   useEffect(() => {
+    setHasMounted(true)
     const onStorage = (e: StorageEvent) => {
       if (e.key === MODE_KEY) {
         setMode(e.newValue || "local")
@@ -32,6 +34,8 @@ const ModeToggle: React.FC = () => {
     localStorage.setItem(MODE_KEY, newMode)
     window.dispatchEvent(new Event("modechange"))
   }
+
+  if (!hasMounted) return null
 
   return (
     <div className="flex items-center justify-center">

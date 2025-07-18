@@ -14,12 +14,21 @@ const getMode = () => {
   return "local"
 }
 
+type Post = {
+  id: number;
+  title: string;
+  body?: string;
+  [key: string]: any;
+}
+
 export default function AllPosts() {
   const [mode, setMode] = useState(getMode())
-  const [data, setData] = useState<any[]>([])
+  const [data, setData] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
+  const [hasMounted, setHasMounted] = useState(false)
 
   useEffect(() => {
+    setHasMounted(true)
     const onModeChange = () => setMode(getMode())
     window.addEventListener("modechange", onModeChange)
     return () => window.removeEventListener("modechange", onModeChange)
@@ -32,6 +41,8 @@ export default function AllPosts() {
       setLoading(false)
     })
   }, [mode])
+
+  if (!hasMounted) return null
 
   if (loading) {
     return (
