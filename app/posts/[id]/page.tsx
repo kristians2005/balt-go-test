@@ -18,7 +18,6 @@ type Post = {
   id: number;
   title: string;
   body?: string;
-  [key: string]: any;
 }
 
 export default function PostPage({ params }: { params: Promise<{ id: string }> }) {
