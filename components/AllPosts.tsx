@@ -17,7 +17,7 @@ const getMode = () => {
 type Post = {
   id: number;
   title: string;
-  body?: string;
+  body: string;
 }
 
 export default function AllPosts() {

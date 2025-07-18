@@ -4,7 +4,7 @@ import React from "react"
 
 interface PostCardProps {
   title: string
-  body?: string
+  body: string
   index: number
 }
 
