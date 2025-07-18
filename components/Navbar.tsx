@@ -9,7 +9,7 @@ export default function Navbar() {
         Balt Go Test
       </div>
       <div className="flex items-center space-x-4">
-        <Link href="https://github.com/YOUR_GITHUB_USERNAME" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+        <Link href="https://github.com/kristians2005/balt-go-test" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"

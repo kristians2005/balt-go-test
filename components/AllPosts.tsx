@@ -1,17 +1,33 @@
 "use client"
 
-import { useEffect, useState, useContext } from "react"
+import { useEffect, useState } from "react"
 import { getData } from "../services/dataService"
-import { ModeContext } from "@/context/ModeContext"
+import Link from "next/link"
+import PostCard from "@/components/PostCard"
+
+const MODE_KEY = "mode"
+
+const getMode = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem(MODE_KEY) || "local"
+  }
+  return "local"
+}
 
 export default function AllPosts() {
-  const { mode } = useContext(ModeContext)
+  const [mode, setMode] = useState(getMode())
   const [data, setData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    const onModeChange = () => setMode(getMode())
+    window.addEventListener("modechange", onModeChange)
+    return () => window.removeEventListener("modechange", onModeChange)
+  }, [])
+
+  useEffect(() => {
     setLoading(true)
-    getData(mode).then((result) => {
+    getData(mode as 'local' | 'api').then((result) => {
       setData(result)
       setLoading(false)
     })
@@ -56,29 +72,13 @@ export default function AllPosts() {
       ) : (
         <div className="space-y-3">
           {data.map((item, index) => (
-            <div
+            <Link
               key={item.id}
-              className="group bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg p-4 transition-all duration-200 border border-gray-200 dark:border-gray-600 hover:shadow-md"
+              href={`/posts/${item.id}`}
+              className="block group bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg p-4 transition-all duration-200 border border-gray-200 dark:border-gray-600 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <div className="flex items-center space-x-3">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                    {index + 1}
-                  </div>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-gray-900 dark:text-white font-medium group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                    {item.title}
-                  </p>
-                  {item.body && (
-                    <p className="text-gray-500 dark:text-gray-400 text-sm mt-1 line-clamp-2">{item.body}</p>
-                  )}
-                </div>
-                <div className="flex-shrink-0">
-                  <div className="w-2 h-2 bg-green-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </div>
-              </div>
-            </div>
+              <PostCard title={item.title} body={item.body} index={index} />
+            </Link>
           ))}
         </div>
       )}

@@ -1,15 +1,36 @@
 "use client"
 
 import type React from "react"
-import { useContext } from "react"
-import { ModeContext } from "@/context/ModeContext"
+import { useEffect, useState } from "react"
+
+const MODE_KEY = "mode"
+
+const getInitialMode = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem(MODE_KEY) || "local"
+  }
+  return "local"
+}
 
 const ModeToggle: React.FC = () => {
-  const { mode, setMode } = useContext(ModeContext)
+  const [mode, setMode] = useState(getInitialMode())
   const isApi = mode === "api"
 
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === MODE_KEY) {
+        setMode(e.newValue || "local")
+      }
+    }
+    window.addEventListener("storage", onStorage)
+    return () => window.removeEventListener("storage", onStorage)
+  }, [])
+
   const handleChange = () => {
-    setMode(isApi ? "local" : "api")
+    const newMode = isApi ? "local" : "api"
+    setMode(newMode)
+    localStorage.setItem(MODE_KEY, newMode)
+    window.dispatchEvent(new Event("modechange"))
   }
 
   return (
@@ -34,12 +55,10 @@ const ModeToggle: React.FC = () => {
           </span>
         </div>
 
-        <div className="text-center mt-4">
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium">
-            <div className={`w-2 h-2 rounded-full mr-2 ${isApi ? "bg-green-500" : "bg-orange-500"}`}></div>
-            <span className="text-gray-700 dark:text-gray-300">API režīms: {isApi ? "IESLĒGTS" : "IZSLĒGTS"}</span>
-          </span>
-        </div>
+        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium">
+          <div className={`w-2 h-2 rounded-full mr-2 ${isApi ? "bg-green-500" : "bg-orange-500"}`}></div>
+          <span className="text-gray-700 dark:text-gray-300">API režīms: {isApi ? "IESLĒGTS" : "IZSLĒGTS"}</span>
+        </span>
       </div>
     </div>
   )
